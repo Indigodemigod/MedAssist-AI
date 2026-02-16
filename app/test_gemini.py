@@ -1,14 +1,14 @@
-# test_gemini.py
-
-import google.generativeai as genai
+from google import genai
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-models = genai.list_models()
+models = client.models.list()
 
 for m in models:
-    print(m.name)
+    print("Model Name:", m.name)
+    print("Model Type:", m.display_name)
+    print("----")
