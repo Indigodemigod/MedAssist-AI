@@ -1,0 +1,8 @@
+venv/
+paivenv/
+__pycache__/
+*.pyc
+.env
+uploads/
+medassist.db
+*.sqlite3
