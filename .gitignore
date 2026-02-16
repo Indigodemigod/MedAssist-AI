@@ -6,3 +6,4 @@ __pycache__/
 uploads/
 medassist.db
 *.sqlite3
+.idea

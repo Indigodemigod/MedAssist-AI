@@ -2,6 +2,10 @@ import json
 import re
 from google import genai
 from app.core.config import settings
+import logging
+import time
+
+logger = logging.getLogger(__name__)
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
@@ -30,16 +34,20 @@ def enrich_medicine_info(medicine_name: str):
     """
 
     try:
+        start = time.time()
+        logger.info("Calling Gemini model for extraction")
+
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt
         )
-
+        logger.info(f"Gemini response received in {time.time() - start:.2f}s")
         cleaned = clean_json_response(response.text)
         parsed = json.loads(cleaned)
         return parsed
 
     except Exception as e:
+        logger.error(f"LLM extraction failed: {e}")
         return {"error": str(e)}
 
 
@@ -72,11 +80,14 @@ def extract_medicines_from_text(ocr_text: str):
     """
 
     try:
+        start = time.time()
+        logger.info("Calling Gemini model for extraction")
+
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt
         )
-        print("LLM Response from Gemini: ", response.text.strip())
+        logger.info(f"Gemini response received in {time.time() - start:.2f}s")
         cleaned = clean_json_response(response.text)
 
         parsed = json.loads(cleaned)
@@ -86,4 +97,5 @@ def extract_medicines_from_text(ocr_text: str):
 
         return parsed
     except Exception as e:
+        logger.error(f"LLM was not able to generate response: {e}")
         return f"LLM Error: {str(e)}"
