@@ -17,38 +17,62 @@ def clean_json_response(text: str):
     return text
 
 
-def enrich_medicine_info(medicine_name: str):
+def extract_and_enrich_medicines(ocr_text: str):
     prompt = f"""
-    Provide medical information about {medicine_name}.
+    You are a medical prescription analyzer.
 
-    Return ONLY JSON in this format:
+    Extract structured medicine information AND provide medical details.
 
-    {{
-      "purpose": "",
-      "common_side_effects": "",
-      "warnings": ""
-    }}
+    Return ONLY valid JSON array.
+    Do NOT include markdown.
+    Do NOT include explanations.
 
-    No markdown.
-    No explanation.
+    Format:
+
+    [
+      {{
+        "medicine_name": "",
+        "dosage": "",
+        "frequency": "",
+        "duration": "",
+        "purpose": "",
+        "common_side_effects": "",
+        "warnings": ""
+      }}
+    ]
+
+    Rules:
+    - Extract dosage, frequency, duration strictly from prescription.
+    - Purpose, side effects, warnings can be generated from medical knowledge.
+    - If something is missing from prescription, leave empty string.
+
+    Prescription Text:
+    {ocr_text}
     """
 
     try:
         start = time.time()
-        logger.info("Calling Gemini model for extraction")
+        logger.info("Calling Gemini for extraction + enrichment")
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="models/gemini-2.5-flash",
             contents=prompt
         )
+
         logger.info(f"Gemini response received in {time.time() - start:.2f}s")
+
         cleaned = clean_json_response(response.text)
         parsed = json.loads(cleaned)
+
+        if not isinstance(parsed, list):
+            raise ValueError("LLM did not return list")
+
         return parsed
 
     except Exception as e:
-        logger.error(f"LLM extraction failed: {e}")
-        return {"error": str(e)}
+        logger.error(f"Unified extraction failed: {e}")
+        return []
+
 
 
 def extract_medicines_from_text(ocr_text: str):
