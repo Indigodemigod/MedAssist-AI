@@ -11,3 +11,10 @@ class PrescriptionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PrescriptionUpdate(BaseModel):
+    analysis_result: List[Dict[str, Any]]
+
+    class Config:
+        schema_extra = {"example": {"analysis_result": []}}

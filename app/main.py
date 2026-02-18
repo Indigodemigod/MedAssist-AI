@@ -5,6 +5,7 @@ from app.core.database import Base
 from app.api.v1 import prescription_routes
 from app.api.v1 import user_routes
 from app.api.v1 import chat_routes
+from app.api.v1 import auth_routes
 from app.core.logging_config import setup_logging
 import logging
 import time
@@ -20,6 +21,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(user_routes.router)
 app.include_router(prescription_routes.router)
 app.include_router(chat_routes.router)
+app.include_router(auth_routes.router)
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
