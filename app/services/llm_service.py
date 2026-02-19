@@ -19,36 +19,46 @@ def clean_json_response(text: str):
 
 def extract_and_enrich_medicines(ocr_text: str):
     prompt = f"""
-    You are a medical prescription analyzer.
+            You are a medical prescription analyzer.
 
-    Extract structured medicine information AND provide medical details.
+            Extract structured medicine information AND provide medical details.
 
-    Return ONLY valid JSON array.
-    Do NOT include markdown.
-    Do NOT include explanations.
+            Return ONLY valid JSON array.
+            Do NOT include markdown.
+            Do NOT include explanations.
 
-    Format:
+            Format:
 
-    [
-      {{
-        "medicine_name": "",
-        "dosage": "",
-        "frequency": "",
-        "duration": "",
-        "purpose": "",
-        "common_side_effects": "",
-        "warnings": ""
-      }}
-    ]
+            [
+            {{
+                "medicine_name": "",
+                "dosage": "",
+                "frequency": "",
+                "duration": "",
+                "administration_instructions": {{
+                    "timing": "",
+                    "food_relation": "",
+                    "special_notes": ""
+                }},
+                "purpose": "",
+                "common_side_effects": "",
+                "warnings": ""
+            }}
+            ]
 
-    Rules:
-    - Extract dosage, frequency, duration strictly from prescription.
-    - Purpose, side effects, warnings can be generated from medical knowledge.
-    - If something is missing from prescription, leave empty string.
+            Rules:
+            - Extract dosage, frequency, duration strictly from prescription.
+            - Extract administration timing strictly from prescription text.
+            - timing = morning/evening/night/bedtime/etc if mentioned.
+            - food_relation = before food / after food / empty stomach / with food if mentioned.
+            - special_notes = any other instruction (e.g. take with water).
+            - If not mentioned in prescription, leave empty string.
+            - Purpose, side effects, warnings can be generated from medical knowledge.
 
-    Prescription Text:
-    {ocr_text}
-    """
+            Prescription Text:
+            {ocr_text}
+            """
+
 
     try:
         start = time.time()

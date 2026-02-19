@@ -88,7 +88,8 @@ class ChatService:
             prompt = build_structured_prompt(
                 question=question,
                 medicines=analysis_result,
-                history=conversation
+                history=conversation,
+                raw_text=prescription.extracted_text
             )
 
         # 🔵 ROUTE 2: SPECIFIC MEDICINE STRUCTURED
@@ -100,7 +101,8 @@ class ChatService:
             prompt = build_structured_prompt(
                 question=question,
                 medicines=match_result["medicines"],
-                history=conversation
+                history=conversation,
+                raw_text=prescription.extracted_text
             )
 
         # 🔵 ROUTE 3: RAG (Fallback)
