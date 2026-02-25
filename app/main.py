@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import engine
 from app.models import user, prescription
 from app.core.database import Base
@@ -15,6 +16,15 @@ logger = logging.getLogger(__name__)
 
 
 app = FastAPI(title="MedAssist AI")
+
+app = FastAPI()
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["http://localhost:3000"],
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"],
+)
 
 Base.metadata.create_all(bind=engine)
 
