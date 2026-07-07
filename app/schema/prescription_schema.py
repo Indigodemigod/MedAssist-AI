@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 class PrescriptionResponse(BaseModel):
     id: int
     user_id: int
@@ -8,6 +8,7 @@ class PrescriptionResponse(BaseModel):
     extracted_text: str
     analysis_result: List[Dict[str, Any]]
     created_at: datetime
+    session_id: Optional[int] = None
 
     class Config:
         from_attributes = True

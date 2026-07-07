@@ -1,0 +1,17 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+sqlalchemy==2.0.23
+pydantic==2.5.0
+python-dotenv==1.0.0
+google-ai-generativelanguage==0.4.0
+numpy==1.26.2
+faiss-cpu==1.7.4
+easyocr==1.7.0
+pdfplumber==0.10.3
+PyMuPDF==1.23.8
+Pillow==10.1.0
+rapidfuzz==3.5.2
+python-multipart==0.0.6
+PyJWT==2.8.1
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1

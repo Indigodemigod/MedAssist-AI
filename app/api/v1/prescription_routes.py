@@ -115,7 +115,16 @@ def upload_prescription(
 
 @router.get("/", response_model=List[PrescriptionResponse])
 def list_prescriptions(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
-    return PrescriptionRepository.get_prescriptions_by_user(db, current_user.id)
+    from app.models.chat_session import ChatSession
+    prescriptions = PrescriptionRepository.get_prescriptions_by_user(db, current_user.id)
+    
+    for p in prescriptions:
+        latest_session = db.query(ChatSession).filter(
+            ChatSession.prescription_id == p.id
+        ).order_by(ChatSession.created_at.desc()).first()
+        p.session_id = latest_session.id if latest_session else None
+        
+    return prescriptions
 
 
 @router.get("/{prescription_id}", response_model=PrescriptionResponse)

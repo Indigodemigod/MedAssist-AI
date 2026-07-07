@@ -40,3 +40,30 @@ def get_session_messages(session_id: int, db: Session = Depends(get_db), current
         )
         for m in messages
     ]
+
+@router.get("/prescription/{prescription_id}/conversations", response_model=List[ChatMessageResponse])
+def get_prescription_conversations(
+    prescription_id: int, 
+    db: Session = Depends(get_db), 
+    current_user=Depends(get_current_user)
+):
+    from app.models.chat_session import ChatSession
+    # Find latest session for this prescription
+    session = db.query(ChatSession).filter(
+        ChatSession.prescription_id == prescription_id
+    ).order_by(ChatSession.created_at.desc()).first()
+    
+    if not session:
+        return []
+        
+    messages = ChatRepository.get_last_messages(db, session.id, limit=100)
+    return [
+        ChatMessageResponse(
+            id=m.id,
+            session_id=m.session_id,
+            role=m.role,
+            content=m.content,
+            created_at=m.created_at
+        )
+        for m in messages
+    ]
